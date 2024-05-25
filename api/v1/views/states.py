@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """  """
-from flask import jsonify, request, abort
+from flask import make_response, jsonify, request, abort
 from . import app_views
 from models import storage
 from models.amenity import Amenity
@@ -12,24 +12,26 @@ from models.user import User
 
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
-@app_views.route('/states/<state_id>', methods=['GET'])
-def get_states(state_id=None):
-    if state_id:
-        state = storage.get(State, state_id)
-        if state:
-            return jsonify(state.to_dict())
-        else:
-            return jsonify({"error": "Not found"}), 404
+def get_states():
+    all_states = storage.all(State)
+    state_list = []
+    for state in all_states.values():
+        state_list.append(state.to_dict())
+    return jsonify(state_list), 200
+
+
+@app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
+def get_states_id(state_id):
+    state = storage.get(State, state_id)
+    if state:
+        return jsonify(state.to_dict())
     else:
-        all_states = storage.all(State)
-        state_list = []
-        for state in all_states.values():
-            state_list.append(state.to_dict())
-        return jsonify(state_list), 200
+        abort(404)
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'])
-def delete_states(state_id=None):
+@app_views.route('/states/<state_id>',
+                 methods=['DELETE'], strict_slashes=False)
+def delete_states(state_id):
     state = storage.get(State, state_id)
     if not state:
         abort(404)
@@ -37,7 +39,7 @@ def delete_states(state_id=None):
         storage.delete(city)
     storage.delete(state)
     storage.save()
-    return jsonify({}), 200
+    return make_response(jsonify({}), 200)
 
 
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
