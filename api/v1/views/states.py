@@ -33,6 +33,8 @@ def delete_states(state_id=None):
     state = storage.get(State, state_id)
     if not state:
         abort(404)
+    for city in state.cities:
+        storage.delete(city)
     storage.delete(state)
     storage.save()
     return jsonify({}), 200
