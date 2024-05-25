@@ -31,12 +31,11 @@ def get_states(state_id=None):
 @app_views.route('/states/<state_id>', methods=['DELETE'])
 def delete_states(state_id=None):
     state = storage.get(State, state_id)
-    if state:
-        storage.delete(state)
-        storage.save()
-        return jsonify({}), 200
-    else:
-        return jsonify({"error": "Not found"}), 404
+    if not state:
+        abort(404)
+    storage.delete(state)
+    storage.save()
+    return jsonify({}), 200
 
 
 @app_views.route('/states', methods=['POST'])
