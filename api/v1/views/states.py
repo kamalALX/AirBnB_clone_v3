@@ -11,7 +11,7 @@ from models.state import State
 from models.user import User
 
 
-@app_views.route('/states', methods=['GET'])
+@app_views.route('/states', methods=['GET'], strict_slashes=False)
 @app_views.route('/states/<state_id>', methods=['GET'])
 def get_states(state_id=None):
     if state_id:
@@ -25,7 +25,7 @@ def get_states(state_id=None):
         state_list = []
         for state in all_states.values():
             state_list.append(state.to_dict())
-        return jsonify(state_list)
+        return jsonify(state_list), 200
 
 
 @app_views.route('/states/<state_id>', methods=['DELETE'])
@@ -33,19 +33,20 @@ def delete_states(state_id=None):
     state = storage.get(State, state_id)
     if not state:
         abort(404)
+    for city in state.cities:
+        storage.delete(city)
     storage.delete(state)
     storage.save()
     return jsonify({}), 200
 
 
-@app_views.route('/states', methods=['POST'])
+@app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state():
-    state_json_in = request.get_json()
-    if not state_json_in:
+    if not request.json:
         abort(400, 'Not a JSON')
-    if 'name' not in state_json_in:
+    if 'name' not in request.json:
         abort(400, 'Missing name')
-    state = State(**state_json_in)
+    state = State(**request.get_json())
     storage.new(state)
     storage.save()
     return jsonify(state.to_dict()), 201
