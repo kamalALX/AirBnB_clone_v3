@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """  """
-from flask import make_response, jsonify, request, abort
+from flask import jsonify, request, abort
 from . import app_views
 from models import storage
 from models.amenity import Amenity
@@ -9,13 +9,6 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
-import json
-
-
-def pretty_jsonify(data):
-    response = make_response(json.dumps(data, indent=2))
-    response.headers['Content-Type'] = 'application/json'
-    return response
 
 
 @app_views.route('/states', methods=['GET'])
@@ -24,16 +17,15 @@ def get_states(state_id=None):
     if state_id:
         state = storage.get(State, state_id)
         if state:
-            return pretty_jsonify(state.to_dict())
+            return jsonify(state.to_dict())
         else:
-            return pretty_jsonify({"error": "Not found"}), 404
-            abort(404)
+            return jsonify({"error": "Not found"}), 404
     else:
         all_states = storage.all(State)
         state_list = []
         for state in all_states.values():
             state_list.append(state.to_dict())
-        return pretty_jsonify(state_list)
+        return jsonify(state_list), 200
 
 
 @app_views.route('/states/<state_id>', methods=['DELETE'])
@@ -45,20 +37,19 @@ def delete_states(state_id=None):
         storage.delete(city)
     storage.delete(state)
     storage.save()
-    return pretty_jsonify({}), 200
+    return jsonify({}), 200
 
 
 @app_views.route('/states', methods=['POST'])
 def create_state():
-    state_json_in = request.get_json()
-    if not state_json_in:
+    if not request.json:
         abort(400, 'Not a JSON')
-    if 'name' not in state_json_in:
+    if 'name' not in request.json:
         abort(400, 'Missing name')
-    state = State(**state_json_in)
+    state = State(**request.get_json())
     storage.new(state)
     storage.save()
-    return pretty_jsonify(state.to_dict()), 201
+    return jsonify(state.to_dict()), 201
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'])
@@ -73,4 +64,4 @@ def update_state(state_id):
         if key not in {'id', 'created_at', 'updated_at'}:
             setattr(state, key, value)
     storage.save()
-    return pretty_jsonify(state.to_dict())
+    return jsonify(state.to_dict())
