@@ -11,7 +11,7 @@ from models.state import State
 from models.user import User
 
 
-@app_views.route('/states', methods=['GET'])
+@app_views.route('/states', methods=['GET'], strict_slashes=False)
 @app_views.route('/states/<state_id>', methods=['GET'])
 def get_states(state_id=None):
     if state_id:
