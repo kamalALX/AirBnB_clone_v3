@@ -30,7 +30,7 @@ def get_states(state_id=None):
 
 @app_views.route('/states/<state_id>', methods=['DELETE'])
 def delete_states(state_id=None):
-    state = storage.get(State, state_id)
+    state = storage.get("State", state_id)
     if not state:
         abort(404)
     storage.delete(state)
