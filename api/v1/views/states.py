@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """  """
-from flask import jsonify, request, abort
+from flask import make_response, jsonify, request, abort
 from . import app_views
 from models import storage
 from models.amenity import Amenity
@@ -46,7 +46,10 @@ def delete_states(state_id=None):
 def create_state():
     json_in = request.get_json()
     if not json_in:
+        """
         abort(400, 'Not a JSON')
+        """
+        make_response(jsonify({'error': 'Not a JSON'}), 400)
     if 'name' not in json_in:
         abort(400, 'Missing name')
     state = State(**json_in)
