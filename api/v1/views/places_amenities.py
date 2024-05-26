@@ -2,7 +2,7 @@
 """ views for reviews class """
 from flask import jsonify, abort, request, make_response
 from models import storage
-from models.review import Amenity
+from models.amenity import Amenity
 from models.place import Place
 from models.user import User
 from api.v1.views import app_views
