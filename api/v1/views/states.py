@@ -20,13 +20,7 @@ def get_states():
     return jsonify(state_list), 200
 
 
-@app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
-def get_states_id(state_id=None):
-    state = storage.get(State, state_id)
-    if state:
-        return jsonify(state.to_dict())
-    else:
-        abort(404)
+
 
 
 @app_views.route('/states/<state_id>',
@@ -54,4 +48,16 @@ def create_state():
     return jsonify(state.to_dict()), 201
 
 
-
+@app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
+def update_state(state_id):
+    state = storage.get(State, state_id)
+    if not state:
+        abort(404)
+    state_json_in = request.get_json()
+    if not state_json_in:
+        abort(400, 'Not a JSON')
+    for key, value in state_json_in.items():
+        if key not in {'id', 'created_at', 'updated_at'}:
+            setattr(state, key, value)
+    storage.save()
+    return jsonify(state.to_dict())
