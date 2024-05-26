@@ -36,8 +36,6 @@ def delete_amenities(amenity_id=None):
     amenity = storage.get(Amenity, amenity_id)
     if not amenity:
         abort(404)
-    for city in amenity.cities:
-        storage.delete(city)
     storage.delete(amenity)
     storage.save()
     return jsonify({}), 200
