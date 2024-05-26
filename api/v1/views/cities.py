@@ -67,7 +67,7 @@ def update_city(city_id):
         abort(404)
 
     if not request.is_json:
-        return jsonify({"error": "Not a JSON"}), 400
+        return make_response(jsonify({'error': 'Not a JSON'}), 400)
     data = request.get_json()
 
     ignored_keys = {'id', 'state_id', 'created_at', 'updated_at'}
@@ -76,4 +76,4 @@ def update_city(city_id):
             setattr(city, key, value)
 
     storage.save()
-    return make_response(jsonify(city.to_dict()), 200)
+    return jsonify(city.to_dict()), 200
