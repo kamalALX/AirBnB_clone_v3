@@ -8,3 +8,4 @@ from . import index
 from . import states
 from . import cities
 from . import amenities
+from . import users
