@@ -1,15 +1,16 @@
 #!/usr/bin/python3
-"""  """
-from  . import app_views
+""" view for user object """
+from . import app_views
 from models import storage
 from flask import jsonify, abort, request, make_response
 from models.user import User
+
 
 @app_views.route('/users', methods=['GET'],
                  strict_slashes=False)
 def get_user():
     """ retrieve all users """
-    users = storage.all(User)
+    users = storage.all(User).values()
     users_list = [user.to_dict() for user in users]
     return jsonify(users_list)
 
@@ -33,7 +34,7 @@ def delete_user(user_id):
         abort(404)
     storage.delete(user)
     storage.save()
-    return jsonify('{}'), 200
+    return jsonify({}), 200
 
 
 @app_views.route('/users', methods=['POST'],
@@ -60,9 +61,8 @@ def post_user():
 def update_user(user_id):
     """Updates a City object."""
     user = storage.get(User, user_id)
-    if not user:
+    if user is None:
         abort(404)
-
     if not request.is_json:
         abort(400, description="Not a JSON")
     data = request.get_json()
@@ -71,6 +71,5 @@ def update_user(user_id):
     for key, value in data.items():
         if key not in ignored_keys:
             setattr(user, key, value)
-
     storage.save()
     return make_response(jsonify(user.to_dict()), 200)
