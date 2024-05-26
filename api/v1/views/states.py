@@ -20,7 +20,13 @@ def get_states():
     return jsonify(state_list), 200
 
 
-
+@app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
+def get_states_id(state_id=None):
+    state = storage.get(State, state_id)
+    if state:
+        return jsonify(state.to_dict())
+    else:
+        abort(404)
 
 
 @app_views.route('/states/<state_id>',
