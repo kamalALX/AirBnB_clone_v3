@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """  """
-from flask import make_response, jsonify, request, abort
+from flask import jsonify, request, abort
 from . import app_views
 from models import storage
 from models.amenity import Amenity
@@ -21,7 +21,7 @@ def get_states():
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
-def get_states_id(state_id):
+def get_states_id(state_id=None):
     state = storage.get(State, state_id)
     if state:
         return jsonify(state.to_dict())
@@ -31,7 +31,7 @@ def get_states_id(state_id):
 
 @app_views.route('/states/<state_id>',
                  methods=['DELETE'], strict_slashes=False)
-def delete_states(state_id):
+def delete_states(state_id=None):
     state = storage.get(State, state_id)
     if not state:
         abort(404)
@@ -39,7 +39,7 @@ def delete_states(state_id):
         storage.delete(city)
     storage.delete(state)
     storage.save()
-    return make_response(jsonify({}), 200)
+    return jsonify({}), 200
 
 
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
@@ -54,7 +54,7 @@ def create_state():
     return jsonify(state.to_dict()), 201
 
 
-@app_views.route('/states/<state_id>', methods=['PUT'])
+@app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
 def update_state(state_id):
     state = storage.get(State, state_id)
     if not state:
