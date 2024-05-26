@@ -46,7 +46,7 @@ def post_city(state_id):
     state = storage.get(State, state_id)
     if not state:
         abort(404)
-    if not request.get_json():
+    if not request.is_json:
         abort(400, description="Not a JSON")
     if 'name' not in request.get_json():
         abort(400, description="Missing name")
