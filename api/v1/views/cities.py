@@ -41,7 +41,7 @@ def delete_city(city_id):
                  strict_slashes=False)
 def post_city(state_id):
     """
-    Creates a City
+    Creates a City object
     """
     state = storage.get(State, state_id)
     if not state:
@@ -66,7 +66,7 @@ def update_city(city_id):
     if not city:
         abort(404)
 
-    if not request.is_json:
+    if not request.get_json():
         abort(400, description="Not a JSON")
     data = request.get_json()
 
