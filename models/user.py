@@ -6,7 +6,8 @@ from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-from hashlib import md5
+# from hashlib import md5
+import hashlib
 
 
 class User(BaseModel, Base):
@@ -29,20 +30,22 @@ class User(BaseModel, Base):
         """initializes user"""
         super().__init__(*args, **kwargs)
 
-    # @property
-    # def password(self):
-    #     return self._password
+    @property
+    def password(self):
+        return self._password
 
-    # @password.setter
-    # def password(self, plain_password):
-    #     self._password = self.hash_password(plain_password)
+    @password.setter
+    def password(self, plain_password):
+        self._password = self.hash_password(plain_password)
 
-    # def hash_password(self, plain_password):
-    #     """Hash the password with MD5."""
-    #     return hashlib.md5(plain_password.encode()).hexdigest()
+    def hash_password(self, plain_password):
+        """Hash the password with MD5."""
+        m = hashlib.md5()
+        m.update(str.encode(plain_password))
+        return m.hexdigest()
 
-    def __setattr__(self, name, value):
-        """sets a password with md5 encryption"""
-        if name == "password":
-            value = md5(value.encode()).hexdigest()
-        super().__setattr__(name, value)
+    # def __setattr__(self, name, value):
+    #     """sets a password with md5 encryption"""
+    #     if name == "password":
+    #         value = md5(value.encode()).hexdigest()
+    #     super().__setattr__(name, value)
