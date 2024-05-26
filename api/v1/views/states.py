@@ -11,16 +11,16 @@ from models.state import State
 from models.user import User
 
 
-@app_views.route('/states', methods=['GET'], strict_slashes=False)
-def get_states():
-    all_states = storage.all(State)
-    state_list = []
-    for state in all_states.values():
-        state_list.append(state.to_dict())
-    return jsonify(state_list), 200
 
 
 
+@app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
+def get_states_id(state_id=None):
+    state = storage.get(State, state_id)
+    if state:
+        return jsonify(state.to_dict())
+    else:
+        abort(404)
 
 
 @app_views.route('/states/<state_id>',
