@@ -29,19 +29,20 @@ def get_states_id(state_id=None):
         abort(404)
 
 
-
-
-
-@app_views.route('/states', methods=['POST'], strict_slashes=False)
-def create_state():
-    if not request.json:
-        abort(400, 'Not a JSON')
-    if 'name' not in request.json:
-        abort(400, 'Missing name')
-    state = State(**request.get_json())
-    storage.new(state)
+@app_views.route('/states/<state_id>',
+                 methods=['DELETE'], strict_slashes=False)
+def delete_states(state_id=None):
+    state = storage.get(State, state_id)
+    if not state:
+        abort(404)
+    for city in state.cities:
+        storage.delete(city)
+    storage.delete(state)
     storage.save()
-    return jsonify(state.to_dict()), 201
+    return jsonify({}), 200
+
+
+
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
