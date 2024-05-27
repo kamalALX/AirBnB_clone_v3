@@ -106,7 +106,7 @@ def places_search():
     for city in city_list:
         if city:
             for place in city.places:
-                if place and place not in places_list:
+                if place not in places_list:
                     list_places.append(place)
 
     if amenities_id_list:
@@ -115,9 +115,6 @@ def places_search():
             amenity = storage.get(Amenity, amenity_id)
             if amenity:
                 amenities_list.append(amenity)
-
-        if not places_list:
-            places_list = all_places
 
         filtered_places = []
         for place in places_list:
