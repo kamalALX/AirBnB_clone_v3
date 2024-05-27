@@ -128,6 +128,8 @@ class TestFileStorage(unittest.TestCase):
     def test_count(self):
         """Test that count returns the correct number of objects"""
         storage = FileStorage()
+        # Clear storage before testing
+        storage._FileStorage__objects = {}
         initial_count = storage.count()
         new_state = State(name="Nevada")
         storage.new(new_state)
