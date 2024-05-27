@@ -102,7 +102,8 @@ def places_search():
                 city_list.append(city)
     places_list = []
     for city in city_list:
-        places_list.extend([place for place in city.places])
+        if city:
+            places_list.extend([place for place in city.places])
     if amenities_id_list:
         amenities_list = []
         for amenity_id in amenities_id_list:
