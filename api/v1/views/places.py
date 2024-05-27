@@ -83,7 +83,6 @@ def places_search():
         amenities_id_list = json_in['amenities']
     except KeyError:
         pass
-
     if not states_id_list and not cities_id_list and not amenities_id_list:
         return jsonify(list_places)
 
@@ -110,8 +109,7 @@ def places_search():
                 if amenity not in place.amenities:
                     places_list.remove(place)
 
-    list_places_2 = [place.to_dict() for place in places_list.values()]
-    return jsonify(list_places_2)
+    return jsonify([place.to_dict() for place in places_list])
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'],
