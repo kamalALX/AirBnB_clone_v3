@@ -72,7 +72,7 @@ def places_search():
     if not request.is_json:
         abort(400, 'Not a JSON')
     all_places = storage.all(Place)
-    list_places = [place.to_dict() for place in all_places]
+    list_places = [place.to_dict() for place in all_places.values()]
     json_in = request.get_json(silent=True)
     if not json_in:
         return jsonify(list_places)
@@ -110,7 +110,7 @@ def places_search():
                 if amenity not in place.amenities:
                     places_list.remove(place)
 
-    return jsonify([place.to_dict() for place in places_list])
+    return jsonify([place.to_dict() for place in places_list.values()])
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'],
