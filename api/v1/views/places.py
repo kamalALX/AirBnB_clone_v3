@@ -110,7 +110,8 @@ def places_search():
                 if amenity not in place.amenities:
                     places_list.remove(place)
 
-    return jsonify([place.to_dict() for place in places_list.values()])
+    list_places_2 = [place.to_dict() for place in places_list.values()]
+    return jsonify(list_places_2)
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'],
