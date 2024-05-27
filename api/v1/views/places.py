@@ -83,8 +83,7 @@ def places_search():
         amenities_id_list = json_in['amenities']
     except KeyError:
         pass
-    print(states_id_list)
-    print(cities_id_list)
+
     if not states_id_list and not cities_id_list and not amenities_id_list:
         return jsonify(list_places)
 
@@ -108,10 +107,12 @@ def places_search():
         for amenity_id in amenities_id_list:
             amenity = storage.get(Amenity, amenity_id)
             amenities_list.append(amenity)
+
+        filtered_places = []
         for place in places_list:
-            for amenity in amenities_list:
-                if amenity not in place.amenities:
-                    places_list.remove(place)
+            if all(amenity in place.amenities for amenity in amenities_list):
+                filtered_places.append(place)
+        return jsonify([place.to_dict() for place in filtered_places])
 
     return jsonify([place.to_dict() for place in places_list])
 
