@@ -78,9 +78,9 @@ def places_search():
         return jsonify(list_places)
     states_id_list = cities_id_list = amenities_id_list = None
     try:
-        states_id_list = json_in['states']
-        cities_id_list = json_in['cities']
-        amenities_id_list = json_in['amenities']
+        states_id_list = json_in.get('states')
+        cities_id_list = json_in.get('cities')
+        amenities_id_list = json_in.get('amenities')
     except KeyError:
         pass
 
