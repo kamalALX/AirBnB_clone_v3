@@ -111,7 +111,7 @@ def places_search():
             amenities_list.append(amenity)
 
         if not places_list:
-            places_list = all_places
+            places_list = all_places.values()
 
         filtered_places = []
         for place in places_list:
