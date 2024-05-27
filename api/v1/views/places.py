@@ -6,6 +6,7 @@ from models.place import Place
 from models.city import City
 from models.user import User
 from models.state import State
+from models.amenity import Amenity
 from api.v1.views import app_views
 
 
@@ -99,7 +100,15 @@ def places_search():
     for city in city_list:
         places_list.extend([place for place in city.places])
     if amenities_id_list:
-        pass
+        amenities_list = []
+        for amenity_id in amenities_id_list:
+            amenity = storage.get(Amenity, amenity_id)
+            amenities_list.append(amenity)
+        for place in places_list:
+            for amenity in amenities_list:
+                if amenity not in place.amenities:
+                    places_list.remove(place)
+
     return jsonify([place.to_dict() for place in places_list])
 
 
