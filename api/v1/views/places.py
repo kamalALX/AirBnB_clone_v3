@@ -95,20 +95,29 @@ def places_search():
                     if city:
                         city_list_temp.append(city)
                 city_list.extend(city_list_temp)
+
     if cities_id_list:
         for city_id in cities_id_list:
             city = storage.get(City, city_id)
             if city:
                 city_list.append(city)
+
     places_list = []
     for city in city_list:
         if city:
-            places_list.extend([place for place in city.places])
+            for place in city.places:
+                if place and place not in places_list:
+                    list_places.append(place)
+
     if amenities_id_list:
         amenities_list = []
         for amenity_id in amenities_id_list:
             amenity = storage.get(Amenity, amenity_id)
-            amenities_list.append(amenity)
+            if amenity:
+                amenities_list.append(amenity)
+
+        if not places_list:
+            places_list = all_places
 
         filtered_places = []
         for place in places_list:
