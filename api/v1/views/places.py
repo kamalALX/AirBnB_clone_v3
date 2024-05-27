@@ -59,9 +59,7 @@ def create_place(city_id):
         abort(404)
     if 'name' not in data:
         abort(400, description="Missing name")
-    """
     data['city_id'] = city_id
-    """
     place = Place(**data)
     place.save()
     return make_response(jsonify(place.to_dict()), 201)
@@ -79,20 +77,26 @@ def places_search():
         return jsonify(list_places)
     states_id_list = json_in['states']
     cities_id_list = json_in['cities']
-    amenities_list = json_in['amenities']
-    if not states_id_list or not cities_id_list or not amenities_list:
+    amenities_id_list = json_in['amenities']
+    if not states_id_list or not cities_id_list or not amenities_id_list:
         list_places = [place.to_dict() for place in all_places.values()]
         return jsonify(list_places)
     city_list = []
     if states_id_list:
         for state_id in states_id_list:
             state = storage.get(State, state_id)
-            city_list_temp = [city.to_dict() for city in state.cities]
+            city_list_temp = [city for city in state.cities]
             city_list.extend(city_list_temp)
     if cities_id_list:
         for city_id in cities_id_list:
             city = storage.get(City, city_id)
             city_list.append(city)
+    places_list = []
+    for city in city_list:
+        places_list.extend([place for place in city.places])
+    if amenities_id_list:
+        pass
+    return jsonify([place.to_dict() for place in places_list])
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'],
