@@ -66,7 +66,6 @@ def create_place(city_id):
     return make_response(jsonify(place.to_dict()), 201)
 
 
-"""
 @app_views.route('/places_search', methods=['POST'],
                  strict_slashes=False)
 def places_search():
@@ -129,7 +128,6 @@ def places_search():
         places.append(place_dict)
 
     return jsonify(places)
-"""
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'],
