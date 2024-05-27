@@ -72,7 +72,7 @@ def places_search():
     if not request.is_json:
         abort(400, 'Not a JSON')
     all_places = storage.all(Place)
-    list_places = [place.to_dict() for place in all_places.values()]
+    list_places = [place.to_dict() for place in all_places]
     json_in = request.get_json(silent=True)
     if not json_in:
         return jsonify(list_places)
@@ -83,6 +83,7 @@ def places_search():
         amenities_id_list = json_in['amenities']
     except KeyError:
         pass
+
     if not states_id_list and not cities_id_list and not amenities_id_list:
         return jsonify(list_places)
 
