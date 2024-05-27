@@ -83,6 +83,8 @@ def places_search():
         amenities_id_list = json_in['amenities']
     except KeyError:
         pass
+    print(states_id_list)
+    print(cities_id_list)
     if not states_id_list and not cities_id_list and not amenities_id_list:
         return jsonify(list_places)
 
@@ -90,12 +92,14 @@ def places_search():
     if states_id_list:
         for state_id in states_id_list:
             state = storage.get(State, state_id)
-            city_list_temp = [city for city in state.cities]
-            city_list.extend(city_list_temp)
+            if state:
+                city_list_temp = [city for city in state.cities]
+                city_list.extend(city_list_temp)
     if cities_id_list:
         for city_id in cities_id_list:
             city = storage.get(City, city_id)
-            city_list.append(city)
+            if city:
+                city_list.append(city)
     places_list = []
     for city in city_list:
         places_list.extend([place for place in city.places])
