@@ -71,16 +71,20 @@ def places_search():
     if not request.is_json:
         abort(400, 'Not a JSON')
     all_places = storage.all(Place)
+    list_places = [place.to_dict() for place in all_places.values()]
     json_in = request.get_json(silent=True)
     if not json_in:
-        list_places = [place.to_dict() for place in all_places.values()]
         return jsonify(list_places)
-    states_id_list = json_in['states']
-    cities_id_list = json_in['cities']
-    amenities_id_list = json_in['amenities']
-    if not states_id_list or not cities_id_list or not amenities_id_list:
-        list_places = [place.to_dict() for place in all_places.values()]
+    states_id_list = cities_id_list = amenities_id_list = None
+    try:
+        states_id_list = json_in['states']
+        cities_id_list = json_in['cities']
+        amenities_id_list = json_in['amenities']
+    except KeyError:
+        pass
+    if not states_id_list and not cities_id_list and not amenities_id_list:
         return jsonify(list_places)
+
     city_list = []
     if states_id_list:
         for state_id in states_id_list:
