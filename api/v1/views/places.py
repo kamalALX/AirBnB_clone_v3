@@ -72,10 +72,10 @@ def places_search():
     if not request.is_json:
         abort(400, 'Not a JSON')
     all_places = storage.all(Place)
-    list_places = [place.to_dict() for place in all_places.values()]
+    dict_all_places = [place.to_dict() for place in all_places.values()]
     json_in = request.get_json(silent=True)
     if not json_in:
-        return jsonify(list_places)
+        return jsonify(dict_all_places)
 
     if json_in and len(json_in):
         states_id_list = json_in.get('states')
@@ -83,7 +83,7 @@ def places_search():
         amenities_id_list = json_in.get('amenities')
 
     if not states_id_list and not cities_id_list and not amenities_id_list:
-        return jsonify(list_places)
+        return jsonify(dict_all_places)
 
     city_list = []
     if states_id_list:
@@ -104,6 +104,7 @@ def places_search():
     for city in city_list:
         if city:
             places_list.extend([place for place in city.places])
+
     if amenities_id_list:
         amenities_list = []
         for amenity_id in amenities_id_list:
@@ -117,9 +118,16 @@ def places_search():
         for place in places_list:
             if all(amenity in place.amenities for amenity in amenities_list):
                 filtered_places.append(place)
-        return jsonify([place.to_dict() for place in filtered_places])
 
-    return jsonify([place.to_dict() for place in places_list])
+        places_list = list(filtered_places)
+
+    places = []
+    for place in places_list:
+        place_dict = place.to_dict()
+        place_dict.pop('amenities', None)
+        places.append(place_dict)
+
+    return jsonify(places)
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'],
