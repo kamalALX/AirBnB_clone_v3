@@ -76,13 +76,11 @@ def places_search():
     json_in = request.get_json(silent=True)
     if not json_in:
         return jsonify(list_places)
-    states_id_list = cities_id_list = amenities_id_list = None
-    try:
+
+    if json_in and len(json_in):
         states_id_list = json_in.get('states')
         cities_id_list = json_in.get('cities')
         amenities_id_list = json_in.get('amenities')
-    except KeyError:
-        pass
 
     if not states_id_list and not cities_id_list and not amenities_id_list:
         return jsonify(list_places)
