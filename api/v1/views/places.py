@@ -5,6 +5,7 @@ from models import storage
 from models.place import Place
 from models.city import City
 from models.user import User
+from models.state import State
 from api.v1.views import app_views
 
 
@@ -58,10 +59,40 @@ def create_place(city_id):
         abort(404)
     if 'name' not in data:
         abort(400, description="Missing name")
+    """
     data['city_id'] = city_id
+    """
     place = Place(**data)
     place.save()
     return make_response(jsonify(place.to_dict()), 201)
+
+
+@app_views.route('/places_search', methods=['POST'],
+                 strict_slashes=False)
+def places_search():
+    if not request.is_json:
+        abort(400, 'Not a JSON')
+    all_places = storage.all(Place)
+    json_in = request.get_json(silent=True)
+    if not json_in:
+        list_places = [place.to_dict() for place in all_places.values()]
+        return jsonify(list_places)
+    states_id_list = json_in['states']
+    cities_id_list = json_in['cities']
+    amenities_list = json_in['amenities']
+    if not states_id_list or not cities_id_list or not amenities_list:
+        list_places = [place.to_dict() for place in all_places.values()]
+        return jsonify(list_places)
+    city_list = []
+    if states_id_list:
+        for state_id in states_id_list:
+            state = storage.get(State, state_id)
+            city_list_temp = [city.to_dict() for city in state.cities]
+            city_list.extend(city_list_temp)
+    if cities_id_list:
+        for city_id in cities_id_list:
+            city = storage.get(City, city_id)
+            city_list.append(city)
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'],
